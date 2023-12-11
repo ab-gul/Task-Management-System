@@ -3,6 +3,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Tasks.API.Contracts.V1;
 using Tasks.API.Domain;
+using Tasks.API.Pagination;
 using Tasks.API.Services;
 using static Tasks.API.Contracts.V1.Tasks;
 
@@ -32,7 +33,11 @@ namespace Tasks.API.Controllers.V1
 
                 return ValidationProblem();
             }
-            var tasks = await _taskService.GetAllTasksAync();
+
+            var notes = await _taskService.GetAllTasksAsync();
+                new PaginationFilter(request?.pageNumber, request?.pageSize);
+
+            var tasks = await _taskService.GetAllTasksAsync();
             return Ok(tasks);
         }
 
