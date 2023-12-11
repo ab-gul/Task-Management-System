@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 using Tasks.API.Contracts.V1;
 using Tasks.API.Domain;
 using Tasks.API.Services;
@@ -19,8 +19,19 @@ namespace Tasks.API.Controllers.V1
         }
 
         [HttpGet(ApiRoutes.Tasks.GetAll)]
-        public async Task<IActionResult> GetAllTasksAsync()
+        public async Task<IActionResult> GetAllTasksAsync([FromQuery] GetAllTasksRequest request,
+            [FromServices] IValidator<GetAllTasksRequest>? validator)
         {
+            ArgumentException.ThrowIfNullOrEmpty(nameof(validator));
+
+            ValidationResult validationResult = validator!.Validate(request);
+
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(this.ModelState);
+
+                return ValidationProblem();
+            }
             var tasks = await _taskService.GetAllTasksAync();
             return Ok(tasks);
         }

@@ -17,6 +17,8 @@ namespace Tasks.API.Contracts.V1
             }
 
         }
+
+        public record GetAllTasksRequest(int? pageNumber, int? pageSize);
         public record UpdateTaskRequest(string? title, string? description, string? status);
         #endregion
 
