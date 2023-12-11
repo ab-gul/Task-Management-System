@@ -1,8 +1,9 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 using Tasks.API.Contracts.V1;
 using Tasks.API.Domain;
+using Tasks.API.Pagination;
 using Tasks.API.Services;
 using static Tasks.API.Contracts.V1.Tasks;
 
@@ -19,9 +20,24 @@ namespace Tasks.API.Controllers.V1
         }
 
         [HttpGet(ApiRoutes.Tasks.GetAll)]
-        public async Task<IActionResult> GetAllTasksAsync()
+        public async Task<IActionResult> GetAllTasksAsync([FromQuery] GetAllTasksRequest request,
+            [FromServices] IValidator<GetAllTasksRequest>? validator)
         {
-            var tasks = await _taskService.GetAllTasksAync();
+            ArgumentException.ThrowIfNullOrEmpty(nameof(validator));
+
+            ValidationResult validationResult = validator!.Validate(request);
+
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(this.ModelState);
+
+                return ValidationProblem();
+            }
+
+            var notes = await _taskService.GetAllTasksAsync();
+                new PaginationFilter(request?.pageNumber, request?.pageSize);
+
+            var tasks = await _taskService.GetAllTasksAsync();
             return Ok(tasks);
         }
 
