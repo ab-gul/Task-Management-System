@@ -24,7 +24,7 @@ namespace Tasks.API.Services
 
         }
 
-        public async Task<List<TaskItem>> GetAllTasksAync()
+        public async Task<List<TaskItem>> GetAllTasksAsync()
         {
             return await _taskRepository.GetAllAsync();
         }

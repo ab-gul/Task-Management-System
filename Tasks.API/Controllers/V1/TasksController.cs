@@ -5,6 +5,7 @@ using Tasks.API.Contracts.V1;
 using Tasks.API.Domain;
 using Tasks.API.Pagination;
 using Tasks.API.Services;
+using Tasks.API.Validation;
 using static Tasks.API.Contracts.V1.Tasks;
 
 namespace Tasks.API.Controllers.V1
