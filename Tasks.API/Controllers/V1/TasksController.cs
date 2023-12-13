@@ -65,7 +65,19 @@ namespace Tasks.API.Controllers.V1
 
         [HttpPut(ApiRoutes.Tasks.Update)]
         public async Task<IActionResult> UpdateTaskAsync([FromRoute] Guid id, [FromBody] UpdateTaskRequest request)
+            [FromServices] IValidator<UpdateTaskRequest>? validator)
         {
+            ArgumentException.ThrowIfNullOrEmpty(nameof(validator));
+
+            ValidationResult validationResult = validator!.Validate(request);
+
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(this.ModelState);
+
+                return ValidationProblem();
+            }
+
             var taskToBeUpdated = await _taskRepo.GetByIdAsync(id);
 
             if (taskToBeUpdated == null) return NotFound($"Task with given Id: {id} does not exist!");
@@ -85,8 +97,18 @@ namespace Tasks.API.Controllers.V1
 
         [HttpPost(ApiRoutes.Tasks.Create)]
         public async Task<IActionResult> CreateTaskAsync([FromBody] CreateTaskRequest request)
+            [FromServices] IValidator<CreateTaskRequest>? validator)
         {
-            var newTask = (TaskItem)request;
+            ArgumentException.ThrowIfNullOrEmpty(nameof(validator));
+
+            ValidationResult validationResult = validator!.Validate(request);
+
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(this.ModelState);
+
+                return ValidationProblem();
+            }
 
             var addedTask = await _taskRepo.CreateAsync((TaskItem)request);
 
