@@ -1,7 +1,11 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using Tasks.API.Contracts.V1;
+using Tasks.API.Data;
+using Tasks.API.Data.Abstract;
 using Tasks.API.Domain;
 using Tasks.API.Pagination;
 using Tasks.API.Services;
@@ -36,11 +40,11 @@ namespace Tasks.API.Controllers.V1
                 return ValidationProblem();
             }
 
-            var notes = await _taskService.GetAllTasksAsync();
-                new PaginationFilter(request?.pageNumber, request?.pageSize);
+            var response = await _taskRepo.GetPaginatedAsync(
+                new PaginationFilter(request?.pageNumber, request?.pageSize),
+                t => new GetTaskResponse(t.Id, t.Title, t.Description, t.DueDate, t.Status));
 
-            var tasks = await _taskService.GetAllTasksAsync();
-            return Ok(tasks);
+            return Ok(response);
         }
 
         [HttpGet(ApiRoutes.Tasks.Get)]
