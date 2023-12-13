@@ -12,7 +12,7 @@ using Tasks.API.Data;
 namespace Tasks.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231211100311_InitialCreate")]
+    [Migration("20231212130521_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -52,6 +52,8 @@ namespace Tasks.API.Migrations
                         .HasColumnName("TITLE");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DueDate", "Status");
 
                     b.ToTable("Tasks", (string)null);
                 });

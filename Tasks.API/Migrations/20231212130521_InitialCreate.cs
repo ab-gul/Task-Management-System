@@ -25,6 +25,11 @@ namespace Tasks.API.Migrations
                 {
                     table.PrimaryKey("PK_Tasks", x => x.ID);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tasks_DUE_DATE_STATUS",
+                table: "Tasks",
+                columns: new[] { "DUE_DATE", "STATUS" });
         }
 
         /// <inheritdoc />
