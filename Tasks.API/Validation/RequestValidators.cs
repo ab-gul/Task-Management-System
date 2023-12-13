@@ -46,5 +46,22 @@ namespace Tasks.API.Validation
                     .WithMessage("\'Description\' section can not be empty or whitespace");
             }
         }
+
+        public sealed class GetAllTasksRequestValidator : AbstractValidator<GetAllTasksRequest>
+        {
+            public GetAllTasksRequestValidator()
+            {
+                RuleFor(x => x.pageSize)
+                    .Must(x => x > 0 && x <= 10)
+                    .When(x => x.pageSize is not null)
+                    .WithMessage("'Page size' must be between 1 and 10");
+
+                RuleFor(x => x.pageNumber)
+                    .GreaterThan(0)
+                    .When(x => x.pageNumber is not null)
+                    .WithMessage("\'Page number\' must be greater than 0");
+
+            }
+        }
     }
 }
