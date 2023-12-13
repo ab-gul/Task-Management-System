@@ -4,7 +4,7 @@ namespace Tasks.API.Pagination
 {
     public class PagedResponse<T>
     {
-        public IEnumerable<T> Items { get; set; }
+        public IEnumerable<T> Items { get; }
         public int PageNumber { get; }
         public int PageSize { get; }
         public int TotalCount { get; }
