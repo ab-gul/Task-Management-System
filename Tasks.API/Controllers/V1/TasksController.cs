@@ -21,7 +21,8 @@ namespace Tasks.API.Controllers.V1
         }
 
         [HttpGet(ApiRoutes.Tasks.GetAll)]
-        public async Task<IActionResult> GetAllTasksAsync([FromQuery] GetAllTasksRequest request,
+        public async Task<IActionResult> GetAllTasksAsync(
+            [FromQuery] GetAllTasksRequest request,
             [FromServices] IValidator<GetAllTasksRequest>? validator)
         {
             ArgumentException.ThrowIfNullOrEmpty(nameof(validator));
@@ -64,7 +65,9 @@ namespace Tasks.API.Controllers.V1
         }
 
         [HttpPut(ApiRoutes.Tasks.Update)]
-        public async Task<IActionResult> UpdateTaskAsync([FromRoute] Guid id, [FromBody] UpdateTaskRequest request)
+        public async Task<IActionResult> UpdateTaskAsync(
+            [FromRoute] Guid id, 
+            [FromBody] UpdateTaskRequest request,
             [FromServices] IValidator<UpdateTaskRequest>? validator)
         {
             ArgumentException.ThrowIfNullOrEmpty(nameof(validator));
@@ -96,7 +99,8 @@ namespace Tasks.API.Controllers.V1
 
 
         [HttpPost(ApiRoutes.Tasks.Create)]
-        public async Task<IActionResult> CreateTaskAsync([FromBody] CreateTaskRequest request)
+        public async Task<IActionResult> CreateTaskAsync(
+            [FromBody] CreateTaskRequest request,
             [FromServices] IValidator<CreateTaskRequest>? validator)
         {
             ArgumentException.ThrowIfNullOrEmpty(nameof(validator));
