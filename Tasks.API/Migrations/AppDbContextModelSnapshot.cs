@@ -50,6 +50,8 @@ namespace Tasks.API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DueDate", "Status");
+
                     b.ToTable("Tasks", (string)null);
                 });
 #pragma warning restore 612, 618
