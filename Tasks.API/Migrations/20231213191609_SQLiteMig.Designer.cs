@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tasks.API.Data;
@@ -12,24 +11,20 @@ using Tasks.API.Data;
 namespace Tasks.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231211100311_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20231213191609_SQLiteMig")]
+    partial class SQLiteMig
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
             modelBuilder.Entity("Tasks.API.Domain.TaskItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("TEXT")
                         .HasColumnName("ID");
 
                     b.Property<string>("Description")
@@ -52,6 +47,8 @@ namespace Tasks.API.Migrations
                         .HasColumnName("TITLE");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DueDate", "Status");
 
                     b.ToTable("Tasks", (string)null);
                 });

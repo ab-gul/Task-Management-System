@@ -3,6 +3,11 @@ using Tasks.API.Data;
 using Tasks.API.Data.Abstract;
 using Tasks.API.Data.Concrete;
 using Tasks.API.Services;
+using FluentValidation;
+using System.Reflection;
+using Microsoft.AspNetCore.Identity;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,13 +19,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetSection("ConnectionStrings")["SQLServerConnection"]));
+            options.UseSqlite(builder.Configuration.GetSection("ConnectionStrings")["SQLiteConnection"]));
 
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
-builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddHostedService<TaskDeadlineCheckerBackgroundService>();
 
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
+
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -39,6 +48,8 @@ app.UseCors(policy =>
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleWare>();
 
 app.MapControllers();
 
