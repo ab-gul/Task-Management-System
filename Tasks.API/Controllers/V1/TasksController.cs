@@ -1,7 +1,13 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
+using System.Linq.Expressions;
+using System.Text.Json;
 using Tasks.API.Contracts.V1;
+using Tasks.API.Data;
+using Tasks.API.Data.Abstract;
 using Tasks.API.Domain;
 using Tasks.API.Pagination;
 using Tasks.API.Services;
@@ -14,14 +20,15 @@ namespace Tasks.API.Controllers.V1
     [ApiController]
     public class TaskController : ControllerBase
     {
-        private readonly ITaskService _taskService;
-        public TaskController(ITaskService taskService)
+        private readonly ITaskRepository _taskRepo;
+        public TaskController(ITaskRepository taskRepo)
         {
-            _taskService = taskService;
+            _taskRepo = taskRepo;
         }
 
         [HttpGet(ApiRoutes.Tasks.GetAll)]
-        public async Task<IActionResult> GetAllTasksAsync([FromQuery] GetAllTasksRequest request,
+        public async Task<IActionResult> GetAllTasksAsync(
+            [FromQuery] GetAllTasksRequest request,
             [FromServices] IValidator<GetAllTasksRequest>? validator)
         {
             ArgumentException.ThrowIfNullOrEmpty(nameof(validator));
@@ -35,17 +42,17 @@ namespace Tasks.API.Controllers.V1
                 return ValidationProblem();
             }
 
-            var notes = await _taskService.GetAllTasksAsync();
-                new PaginationFilter(request?.pageNumber, request?.pageSize);
+            var response = await _taskRepo.GetPaginatedAsync(
+                new PaginationFilter(request?.pageNumber, request?.pageSize),
+                t => new GetTaskResponse(t.Id, t.Title, t.Description, t.DueDate, t.Status));
 
-            var tasks = await _taskService.GetAllTasksAsync();
-            return Ok(tasks);
+            return Ok(response);
         }
 
         [HttpGet(ApiRoutes.Tasks.Get)]
         public async Task<IActionResult> GetTaskByIdAsync([FromRoute] Guid id)
         {
-            var Task = await _taskService.GetTaskByIdAsync(id);
+            var Task = await _taskRepo.GetByIdAsync(id);
 
             return Task != null
                 ? Ok((GetTaskResponse)Task)
@@ -56,7 +63,7 @@ namespace Tasks.API.Controllers.V1
         [HttpDelete(ApiRoutes.Tasks.Delete)]
         public async Task<IActionResult> DeleteTaskAsync([FromRoute] Guid id)
         {
-            var deleted = await _taskService.DeleteTaskAsync(id);
+            var deleted = await _taskRepo.DeleteAsync(id);
 
             if (deleted == false) return NotFound($"Task with given id: {id} does not exist!");
 
@@ -64,31 +71,58 @@ namespace Tasks.API.Controllers.V1
         }
 
         [HttpPut(ApiRoutes.Tasks.Update)]
-        public async Task<IActionResult> UpdateTaskAsync([FromRoute] Guid id, [FromBody] UpdateTaskRequest request)
+        public async Task<IActionResult> UpdateTaskAsync(
+            [FromRoute] Guid id,
+            [FromBody] JsonElement request,
+            [FromServices] IValidator<JsonElement>? validator)
         {
-            var taskToBeUpdated = await _taskService.GetTaskByIdAsync(id);
+            ArgumentException.ThrowIfNullOrEmpty(nameof(validator));
 
-            if (taskToBeUpdated == null) return NotFound($"Task with given Id: {id} does not exist!");
+            ValidationResult validationResult = validator!.Validate(request);
 
-            taskToBeUpdated.Edit(
-                request.title,
-                request.description,
-                request.status != null
-                ? (Status)Enum.Parse(typeof(Status), request.status, true)
-                : null);
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(this.ModelState);
 
-            await _taskService.UpdateTaskAsync(taskToBeUpdated);
+                return ValidationProblem();
+            }
+
+            var taskToBeUpdated = await _taskRepo.GetByIdAsync(id);
+
+            if (taskToBeUpdated == null) { return NotFound($"Task with given Id: {id} does not exist!"); }
+
+            UpdateTaskRequest? updateRequestModel = JsonSerializer.Deserialize<UpdateTaskRequest>(request.GetRawText()); 
+        
+
+                    taskToBeUpdated.Edit(
+                        updateRequestModel!.title,
+                        updateRequestModel.description,
+                        updateRequestModel.status != null
+                        ? (Status)Enum.Parse(typeof(Status), updateRequestModel.status, true)
+                        : null);
+
+            await _taskRepo.UpdateAsync(taskToBeUpdated);
 
             return NoContent();
         }
 
-
         [HttpPost(ApiRoutes.Tasks.Create)]
-        public async Task<IActionResult> CreateTaskAsync([FromBody] CreateTaskRequest request)
+        public async Task<IActionResult> CreateTaskAsync(
+            [FromBody] CreateTaskRequest request,
+            [FromServices] IValidator<CreateTaskRequest>? validator)
         {
-            var newTask = (TaskItem)request;
+            ArgumentException.ThrowIfNullOrEmpty(nameof(validator));
 
-            var addedTask = await _taskService.AddTaskAsync(newTask);
+            ValidationResult validationResult = validator!.Validate(request);
+
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(this.ModelState);
+
+                return ValidationProblem();
+            }
+
+            var addedTask = await _taskRepo.CreateAsync((TaskItem)request);
 
             return Ok((CreateTaskResponse)addedTask);
         }

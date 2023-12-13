@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Tasks.API.Domain;
 
 namespace Tasks.API.Data
@@ -16,6 +17,7 @@ namespace Tasks.API.Data
                 entity.Property(e => e.DueDate).IsRequired().HasColumnType("datetime").HasColumnName("DUE_DATE");
                 entity.Property(e => e.Status).IsRequired().HasConversion<string>().HasColumnType("nvarchar(15)").HasColumnName("STATUS");
 
+                entity.HasIndex(t => new { t.DueDate, t.Status });
                 entity.ToTable("Tasks");
 
             });

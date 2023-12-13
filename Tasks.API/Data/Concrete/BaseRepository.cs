@@ -1,14 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Tasks.API.Data.Abstract;
 using Tasks.API.Domain;
+using Tasks.API.Pagination;
 
 namespace Tasks.API.Data.Concrete
 {
     public abstract class BaseRepository<T> : IBaseRepository<T> where T : Base
     {
-        private readonly AppDbContext _dbContext;
+        protected readonly AppDbContext _dbContext;
         protected readonly DbSet<T> _entities;
         public BaseRepository(AppDbContext context)
         {
@@ -31,7 +33,7 @@ namespace Tasks.API.Data.Concrete
             };
         }
 
-        public virtual async Task<List<T>> GetAllAsync()
+        public  async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _entities.AsNoTracking().ToListAsync() ?? new List<T>();
         }
@@ -47,6 +49,6 @@ namespace Tasks.API.Data.Concrete
             await _dbContext.SaveChangesAsync();
         }
 
-        
+
     }
 }
