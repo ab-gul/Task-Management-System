@@ -19,7 +19,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetSection("ConnectionStrings")["SQLServerConnection"]));
+            options.UseSqlite(builder.Configuration.GetSection("ConnectionStrings")["SQLiteConnection"]));
 
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddHostedService<TaskDeadlineCheckerBackgroundService>();

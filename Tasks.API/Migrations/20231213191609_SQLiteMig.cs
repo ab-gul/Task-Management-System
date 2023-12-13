@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Tasks.API.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class SQLiteMig : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,7 +15,7 @@ namespace Tasks.API.Migrations
                 name: "Tasks",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ID = table.Column<Guid>(type: "TEXT", nullable: false),
                     TITLE = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     DESCRIPTION = table.Column<string>(type: "nvarchar(500)", nullable: false),
                     DUE_DATE = table.Column<DateTime>(type: "datetime", nullable: false),
