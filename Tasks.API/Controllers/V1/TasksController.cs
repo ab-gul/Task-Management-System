@@ -2,7 +2,9 @@
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using System.Linq.Expressions;
+using System.Text.Json;
 using Tasks.API.Contracts.V1;
 using Tasks.API.Data;
 using Tasks.API.Data.Abstract;
@@ -70,9 +72,9 @@ namespace Tasks.API.Controllers.V1
 
         [HttpPut(ApiRoutes.Tasks.Update)]
         public async Task<IActionResult> UpdateTaskAsync(
-            [FromRoute] Guid id, 
-            [FromBody] UpdateTaskRequest request,
-            [FromServices] IValidator<UpdateTaskRequest>? validator)
+            [FromRoute] Guid id,
+            [FromBody] JsonElement request,
+            [FromServices] IValidator<JsonElement>? validator)
         {
             ArgumentException.ThrowIfNullOrEmpty(nameof(validator));
 
@@ -87,20 +89,22 @@ namespace Tasks.API.Controllers.V1
 
             var taskToBeUpdated = await _taskRepo.GetByIdAsync(id);
 
-            if (taskToBeUpdated == null) return NotFound($"Task with given Id: {id} does not exist!");
+            if (taskToBeUpdated == null) { return NotFound($"Task with given Id: {id} does not exist!"); }
 
-            taskToBeUpdated.Edit(
-                request.title,
-                request.description,
-                request.status != null
-                ? (Status)Enum.Parse(typeof(Status), request.status, true)
-                : null);
+            UpdateTaskRequest? updateRequestModel = JsonSerializer.Deserialize<UpdateTaskRequest>(request.GetRawText()); 
+        
+
+                    taskToBeUpdated.Edit(
+                        updateRequestModel!.title,
+                        updateRequestModel.description,
+                        updateRequestModel.status != null
+                        ? (Status)Enum.Parse(typeof(Status), updateRequestModel.status, true)
+                        : null);
 
             await _taskRepo.UpdateAsync(taskToBeUpdated);
 
             return NoContent();
         }
-
 
         [HttpPost(ApiRoutes.Tasks.Create)]
         public async Task<IActionResult> CreateTaskAsync(
