@@ -14,10 +14,10 @@ namespace Tasks.API.Controllers.V1
     [ApiController]
     public class TaskController : ControllerBase
     {
-        private readonly ITaskService _taskService;
-        public TaskController(ITaskService taskService)
+        private readonly ITaskRepository _taskRepo;
+        public TaskController(ITaskRepository taskRepo)
         {
-            _taskService = taskService;
+            _taskRepo = taskRepo;
         }
 
         [HttpGet(ApiRoutes.Tasks.GetAll)]
@@ -45,7 +45,7 @@ namespace Tasks.API.Controllers.V1
         [HttpGet(ApiRoutes.Tasks.Get)]
         public async Task<IActionResult> GetTaskByIdAsync([FromRoute] Guid id)
         {
-            var Task = await _taskService.GetTaskByIdAsync(id);
+            var Task = await _taskRepo.GetByIdAsync(id);
 
             return Task != null
                 ? Ok((GetTaskResponse)Task)
@@ -56,7 +56,7 @@ namespace Tasks.API.Controllers.V1
         [HttpDelete(ApiRoutes.Tasks.Delete)]
         public async Task<IActionResult> DeleteTaskAsync([FromRoute] Guid id)
         {
-            var deleted = await _taskService.DeleteTaskAsync(id);
+            var deleted = await _taskRepo.DeleteAsync(id);
 
             if (deleted == false) return NotFound($"Task with given id: {id} does not exist!");
 
@@ -66,7 +66,7 @@ namespace Tasks.API.Controllers.V1
         [HttpPut(ApiRoutes.Tasks.Update)]
         public async Task<IActionResult> UpdateTaskAsync([FromRoute] Guid id, [FromBody] UpdateTaskRequest request)
         {
-            var taskToBeUpdated = await _taskService.GetTaskByIdAsync(id);
+            var taskToBeUpdated = await _taskRepo.GetByIdAsync(id);
 
             if (taskToBeUpdated == null) return NotFound($"Task with given Id: {id} does not exist!");
 
@@ -77,7 +77,7 @@ namespace Tasks.API.Controllers.V1
                 ? (Status)Enum.Parse(typeof(Status), request.status, true)
                 : null);
 
-            await _taskService.UpdateTaskAsync(taskToBeUpdated);
+            await _taskRepo.UpdateAsync(taskToBeUpdated);
 
             return NoContent();
         }
@@ -88,7 +88,7 @@ namespace Tasks.API.Controllers.V1
         {
             var newTask = (TaskItem)request;
 
-            var addedTask = await _taskService.AddTaskAsync(newTask);
+            var addedTask = await _taskRepo.CreateAsync((TaskItem)request);
 
             return Ok((CreateTaskResponse)addedTask);
         }
