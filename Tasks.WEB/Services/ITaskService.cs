@@ -4,7 +4,7 @@ namespace Tasks.WEB.Services
 {
     public interface ITaskService
     {
-        Task<IEnumerable<TaskDTO>> GetAllAsync();
+        Task<TaskListDTO> GetAllAsync(int pageNumber = 1, int pageSize = 10);
         Task<TaskDTO> GetByIdAsync(Guid id);
         Task<TaskDTO> AddAsync(TaskDTO entity);
         Task UpdateAsync(TaskDTO entity);

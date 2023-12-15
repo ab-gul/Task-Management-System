@@ -40,13 +40,13 @@ namespace Tasks.WEB.Services
             }
         }
 
-        public async Task<IEnumerable<TaskDTO>> GetAllAsync()
+        public async Task<TaskListDTO> GetAllAsync(int pageNumber = 1, int pageSize = 10)
         {
             try
             {
-                var response = await _httpClient.GetAsync(endpoint);
+                var response = await _httpClient.GetAsync($"{endpoint}?pageNumber={pageNumber}&pageSize={pageSize}");
                 response.EnsureSuccessStatusCode();
-                return (((await response.Content.ReadFromJsonAsync<IEnumerable<TaskDTO>>())) ?? new List<TaskDTO>());
+                return ((await response.Content.ReadFromJsonAsync<TaskListDTO>()) ?? new TaskListDTO());
             }
             catch (Exception)
             {
@@ -58,7 +58,13 @@ namespace Tasks.WEB.Services
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync(endpoint, entity);
+                var response = await _httpClient.PostAsJsonAsync(
+                    endpoint, 
+                    new { 
+                        entity.Title, 
+                        entity.Description,
+                        entity.DueDate 
+                    });
                 response.EnsureSuccessStatusCode();
                 return ((await response.Content.ReadFromJsonAsync<TaskDTO>())!);
             }
@@ -72,7 +78,8 @@ namespace Tasks.WEB.Services
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync($"{endpoint}/{entity.Id}", entity);
+                var response = await _httpClient.PutAsJsonAsync($"{endpoint}/{entity.Id}", 
+                    new { entity.Title , entity.Description, entity.Status });
                 response.EnsureSuccessStatusCode();
             }
             catch (Exception)

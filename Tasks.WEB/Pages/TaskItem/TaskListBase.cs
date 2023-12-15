@@ -22,12 +22,21 @@ namespace Tasks.WEB.Pages.TaskItem
 
         protected ObservableCollection<TaskDTO> Tasks;
 
+        protected PaginationDTO Pagination; 
+
         protected bool _readOnly = true;
 
         protected override async Task OnInitializedAsync()
         {
             var response = await _tasksService.GetAllAsync();
-            Tasks = new ObservableCollection<TaskDTO>(response);
+            Tasks = new ObservableCollection<TaskDTO>(response.Items);
+
+            Pagination = new PaginationDTO
+            {
+                PageNumber = response.PageNumber,
+                PageSize = response.PageSize,
+                TotalPages = (int)Math.Ceiling((double)response.TotalCount / response.PageSize)
+            };
         }
 
         protected void RowClickedAsync(DataGridRowClickEventArgs<TaskDTO> args)
@@ -79,22 +88,31 @@ namespace Tasks.WEB.Pages.TaskItem
 
         protected async Task AddTask()
         {
-            //var parameters = new DialogParameters();
-            //var dialogresult = _dialogService.Show<PostTaskForm>("New Task", parameters);
+            var parameters = new DialogParameters();
+            var dialogresult = _dialogService.Show<TaskPost>("New Task", parameters);
 
-            //var result = await dialogresult.Result;
+            var result = await dialogresult.Result;
 
-            //if (!result.Canceled)
-            //{
-            //    var response = await _tasksService.AddAsync((TaskDTO)result.Data);
+            if (!result.Canceled)
+            {
+                var response = await _tasksService.AddAsync((TaskDTO)result.Data);
 
+                Tasks.Insert(0, response);
+                Snackbar.Add($"Task with title: '{response.Title}' added!", Severity.Success);
+            }
+        }
 
-            //    Tasks.Insert(0, response);
-            //    Snackbar.Add($"Task with title: '{response.Title}' added!", Severity.Success);
-            //}
+        protected Func<TaskDTO, int, string> GetRowStyle => (x, i) =>
+        {
+           return x.Status == "OverDue"
+                ? "background-color:yellow;"
+                : "";
+        };
 
-            await Task.Delay(1000);
-
+        protected async Task PageChanged(int pageNumber)
+        {
+            var response = await _tasksService.GetAllAsync(pageNumber);
+            Tasks = new ObservableCollection<TaskDTO>(response.Items);
         }
     }
 }

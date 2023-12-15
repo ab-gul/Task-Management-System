@@ -25,19 +25,27 @@ else
          ColumnResizeMode="ResizeMode.Column" 
          CanCancelEdit="true"
          Hover=true
-         RowClick="RowClickedAsync">
+         RowClick="RowClickedAsync"
+                 RowStyleFunc="@GetRowStyle">
          
-     <ToolBarContent>
+     <ToolBarContent >
             <MudText  Typo="Typo.h6">Tasks</MudText>
-        </ToolBarContent>         
+        </ToolBarContent>
         <Columns>
              <PropertyColumn Property="x => x.Title"/>
              <PropertyColumn Property="x => x.Description"/>
-             <PropertyColumn Property="x => x.DueDate"/>
-             <PropertyColumn Property="x => x.Status"/>
-
-
-             <TemplateColumn Hidden="@(_readOnly)" CellClass="d-flex justify-end">
+             <PropertyColumn IsEditable="false" Property="x => x.DueDate"/>
+             <PropertyColumn Property="x => x.Status">
+                <EditTemplate>
+                    <MudSelect Label="Status" @bind-Value="context.Item.Status" Margin="@Margin.Dense">
+                         <MudSelectItem  Value="@("Pending")"></MudSelectItem>
+                        <MudSelectItem Value="@("InProgress")">In Progress</MudSelectItem>
+                        <MudSelectItem  Value="@("Completed")">Completed</MudSelectItem>
+                     </MudSelect>
+                 </EditTemplate>
+                 </PropertyColumn>
+            
+         <TemplateColumn Hidden="@(_readOnly)" CellClass="d-flex justify-end">
          <CellTemplate>
          <MudIconButton  Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Color="Color.Warning" OnClick="@context.Actions.StartEditingItemAsync" />
          <MudIconButton  Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Color="Color.Error" OnClick=@(( async () => await DeleteButtonClickedAsync(context.Item))) />
@@ -45,4 +53,9 @@ else
          </TemplateColumn>
      </Columns>
  </MudDataGrid>
-}
+
+    <div class="text-center mt-3">
+        <MudPagination SelectedChanged="PageChanged" Color="Color.Primary" Count="@Pagination.TotalPages" />
+    </div>
+
+} 
