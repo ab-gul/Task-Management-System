@@ -1,7 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using Tasks.API.Data;
-using Tasks.API.Data.Abstract;
 using Tasks.API.Domain;
 
 namespace Tasks.API.Services
