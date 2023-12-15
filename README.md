@@ -46,7 +46,7 @@ You can use Postman to request various enpoints via premade templates:https://ap
 
 **Response:**
 ```json
-<span style="color: green;">200 OK</span>
+Status Code: 200 OK
 {
     "items": [
         {
@@ -75,9 +75,21 @@ You can use Postman to request various enpoints via premade templates:https://ap
   GET /api/v1/tasks/${id}
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `id`      | `guid` |  **Required**|
+| Parameter | Type     | Required                       | Validation|
+| :-------- | :------- | :-------------------------------- | :------------- |
+| `id`      | `guid` |  **Yes**| is guid |
+
+**Response:**
+```json
+Status Code: 200 OK
+{
+    "id": "06736133-2f21-4620-bd5e-2499f175254f",
+    "title": "task2",
+    "description": "description",
+    "dueDate": "2024-04-23T18:25:43.511",
+    "status": "Pending"
+}
+```
 
 #### Add task
 
@@ -85,42 +97,71 @@ You can use Postman to request various enpoints via premade templates:https://ap
   POST /api/v1/tasks
 ```
 
-| Body | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `title`      | `string` | **Required**|
-| `description`      | `string` | **Required**|
-| `dueDate`    | `date` | **Required**|
+| Body | Type     | Required                       | Validation |
+| :-------- | :------- | :-------------------------------- | :--------|
+| `title`      | `string` | **Yes**| =! null, empty, whitespace | 
+| `description`      | `string` | **Yes**| =! null, empty, whitespace |
+| `dueDate`    | `date` | **Yes**|  =! null, empty, whitespace, date in past |
 
-```https
-  Example payload {
-
+**Request:**
+```json
+ {
     "title":"task_1",
     "description":"description_1",
     "dueDate": "2023-12-30T12:07:12.557"
   }
 ```
+**Response:**
+```json
+Status Code: 201 CREATED
+{
+    "id": "06736133-2f21-4620-bd5e-2499f175254f",
+    "title": "task_1",
+    "description": "description_1",
+    "dueDate": "2023-12-30T12:07:12.557",
+    "status": "Pending"
+}
+```
+
 #### Delete task
 
 ```https
   DELETE /api/v1/tasks/${id}
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `id`      | `guid` |  **Required**|
+| Parameter | Type     | Required                       | Validation |
+| :-------- | :------- | :-------------------------------- | :-----|
+| `id`      | `guid` |  **Yes**| is guid |
+
+**Response:**
+```json
+Status Code: 204 NO CONTENT
+```
 
 #### Update task
 
 ```https
   PUT /api/v1/tasks/${id}
 ```
-| Parameter       | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `id`      | `guid` | **Required**|
+| Parameter       | Type     | Required                 | Validation |
+| :-------- | :------- | :-------------------------------- | :----- |
+| `id`      | `guid` | **Yes**| is guid | 
 
 
-| Body | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `title`      | `string` | **Not Required**|
-| `description`      | `string` | **Not Required**|
-| `status`   | `string` | **Not Required**|
+| Body | Type     | Required                       | Validation |
+| :-------- | :------- | :-------------------------------- | :---- |
+| `title`      | `string` | **No**| =! empty, whitespace | 
+| `description`      | `string` | **No**| =! empty, whitespace |
+| `status`   | `string` | **No**| == Pending, InProgress, Completed 
+
+**Request:**
+```json
+ {
+    "status":"Completed"
+  }
+```
+
+**Response:**
+```json
+Status Code: 204 NO CONTENT
+```
