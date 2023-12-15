@@ -5,7 +5,7 @@ VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tasks.API", "Tasks.API\Tasks.API.csproj", "{E45AB50E-3ACB-46DB-91E8-2D29AA5F1C77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tasks.WEB", "Tasks.WEB\Tasks.WEB.csproj", "{702C8973-B766-481F-A24C-DA8424317F26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tasks.WEB", "Tasks.WEB\Tasks.WEB.csproj", "{702C8973-B766-481F-A24C-DA8424317F26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

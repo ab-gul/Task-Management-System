@@ -1,7 +1,4 @@
 ﻿using FluentValidation;
-using Microsoft.OpenApi.Extensions;
-using Newtonsoft.Json.Linq;
-using System.Reflection;
 using System.Text.Json;
 using Tasks.API.Domain;
 using static Tasks.API.Contracts.V1.Tasks;

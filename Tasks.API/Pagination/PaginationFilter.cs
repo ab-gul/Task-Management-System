@@ -2,7 +2,7 @@
 {
     public class PaginationFilter
     {
-        private int minPageSize = 10;
+        private int maxPageSize = 10;
         private int minPageNumber = 1;
 
         public int PageNumber { get; private set; }
@@ -20,8 +20,8 @@
                 ? minPageNumber
                 : (int)pageNumber;
 
-            this.PageSize = pageSize == null || pageSize < minPageSize
-                ? minPageSize
+            this.PageSize = pageSize == null || pageSize > maxPageSize
+                ? maxPageSize
                 : (int)pageSize;
 
         }
