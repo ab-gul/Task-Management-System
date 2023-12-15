@@ -41,8 +41,8 @@ You can use Postman to request various enpoints via premade templates:https://ap
 ```
 | Parameter | Type     | Required               | Validation |
 | :-------- | :------- | :-------------------------------- || :---------- |
-| `pageNumber`      | `int` |  **No**| >= 1 |
-| `pageSize`      | `int` |  **No**| >= 1 && <= 10|
+| `pageNumber`      | `int` |  **No**| **>= 1** |
+| `pageSize`      | `int` |  **No**| **>= 1 && <= 10**|
 
 #### Get task
 
