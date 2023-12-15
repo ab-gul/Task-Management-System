@@ -46,7 +46,7 @@ You can use Postman to request various enpoints via premade templates:https://ap
 
 **Response:**
 ```json
-Status Code: 200 OK
+Status Code: <span style="color: green;">200 OK</span>
 {
     "items": [
         {
