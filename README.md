@@ -44,6 +44,31 @@ You can use Postman to request various enpoints via premade templates:https://ap
 | `pageNumber`      | `int` |  **No**| **>= 1** |
 | `pageSize`      | `int` |  **No**| **>= 1 && <= 10**|
 
+**Response:**
+```json
+Status Code: 200 OK
+{
+    "items": [
+        {
+            "id": "257e56b7-27fd-40f4-926f-4bd2157d1050",
+            "title": "task2",
+            "description": "description",
+            "dueDate": "2024-04-23T18:25:43.511",
+            "status": "Pending"
+        },
+        {
+            "id": "2df8f6ca-723c-403a-b40f-9bc019ccef1c",
+            "title": "task2",
+            "description": "description",
+            "dueDate": "2024-04-23T18:25:43.511",
+            "status": "Pending"
+        }
+    ],
+    "pageNumber": 1,
+    "pageSize": 2,
+    "totalCount": 150
+}
+
 #### Get task
 
 ```https
