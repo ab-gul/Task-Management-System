@@ -1,16 +1,11 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
-using System.Linq.Expressions;
 using System.Text.Json;
 using Tasks.API.Contracts.V1;
-using Tasks.API.Data;
 using Tasks.API.Data.Abstract;
 using Tasks.API.Domain;
 using Tasks.API.Pagination;
-using Tasks.API.Services;
 using Tasks.API.Validation;
 using static Tasks.API.Contracts.V1.Tasks;
 
