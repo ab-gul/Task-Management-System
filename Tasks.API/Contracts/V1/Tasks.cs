@@ -30,7 +30,7 @@ namespace Tasks.API.Contracts.V1
                 return new GetTaskResponse(task.Id, task.Title, task.Description, task.DueDate, task.Status);
             }
         }
-        public record CreateTaskResponse(Guid id ,string title, string description, DateTime dueDate, Status status)
+        public record CreateTaskResponse(Guid id, string title, string description, DateTime dueDate, Status status)
         {
             public static explicit operator CreateTaskResponse(TaskItem task)
             {

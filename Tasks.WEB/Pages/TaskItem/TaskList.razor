@@ -1,0 +1,61 @@
+﻿@page "/"
+@inherits TaskListBase
+@using Tasks.WEB.Models
+
+
+@if (Tasks == null)
+{
+   <MudProgressCircular Color="Color.Success" Size="Size.Large" Indeterminate="true" />
+}
+
+else
+{
+     <MudButton OnClick="@AddTask" Color="@Color.Success" Class="add-item-btn">Add Task</MudButton>
+     <MudSwitch @bind-Checked="@_readOnly" Color="Color.Primary">Read Only</MudSwitch>
+
+         <MudDataGrid
+         RowClass="cursor-pointer" 
+         T="TaskDTO" 
+         Items="@Tasks" 
+         EditMode="@(DataGridEditMode.Form)"
+         CommittedItemChanges="@CommittedItemChanges"
+         Dense="false"
+         ReadOnly="@_readOnly"
+         EditTrigger="@(DataGridEditTrigger.Manual)" 
+         ColumnResizeMode="ResizeMode.Column" 
+         CanCancelEdit="true"
+         Hover=true
+         RowClick="RowClickedAsync"
+                 RowStyleFunc="@GetRowStyle">
+         
+     <ToolBarContent >
+            <MudText  Typo="Typo.h6">Tasks</MudText>
+        </ToolBarContent>
+        <Columns>
+             <PropertyColumn Property="x => x.Title"/>
+             <PropertyColumn Property="x => x.Description"/>
+             <PropertyColumn IsEditable="false" Property="x => x.DueDate"/>
+             <PropertyColumn Property="x => x.Status">
+                <EditTemplate>
+                    <MudSelect Label="Status" @bind-Value="context.Item.Status" Margin="@Margin.Dense">
+                         <MudSelectItem  Value="@("Pending")"></MudSelectItem>
+                        <MudSelectItem Value="@("InProgress")">In Progress</MudSelectItem>
+                        <MudSelectItem  Value="@("Completed")">Completed</MudSelectItem>
+                     </MudSelect>
+                 </EditTemplate>
+                 </PropertyColumn>
+            
+         <TemplateColumn Hidden="@(_readOnly)" CellClass="d-flex justify-end">
+         <CellTemplate>
+         <MudIconButton  Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Color="Color.Warning" OnClick="@context.Actions.StartEditingItemAsync" />
+         <MudIconButton  Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Color="Color.Error" OnClick=@(( async () => await DeleteButtonClickedAsync(context.Item))) />
+         </CellTemplate>
+         </TemplateColumn>
+     </Columns>
+ </MudDataGrid>
+
+    <div class="text-center mt-3">
+        <MudPagination SelectedChanged="PageChanged" Color="Color.Primary" Count="@Pagination.TotalPages" />
+    </div>
+
+} 
