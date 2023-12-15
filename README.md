@@ -39,10 +39,10 @@ You can use Postman to request various enpoints via premade templates:https://ap
 ```https
   GET /api/v1/tasks
 ```
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `pageNumber`      | `int` |  **Non-Required**|
-| `pageSize`      | `int` |  **Non-Required**|
+| Parameter | Type     | Required               | Validation |
+| :-------- | :------- | :-------------------------------- || :---------- |
+| `pageNumber`      | `int` |  **No**| >= 1 |
+| `pageSize`      | `int` |  **No**| >= 1 && <= 10|
 
 #### Get task
 
