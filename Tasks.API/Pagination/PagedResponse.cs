@@ -7,15 +7,15 @@ namespace Tasks.API.Pagination
         public IEnumerable<T> Items { get; }
         public int PageNumber { get; }
         public int PageSize { get; }
-        public int TotalCount { get; }
+        public int TotalPages { get; }
 
 
-        private PagedResponse(IEnumerable<T> items,int pageNumber, int pageSize, int totalCount)
+        private PagedResponse(IEnumerable<T> items,int pageNumber, int pageSize, int totalPages)
         {
             this.Items = items;
             this.PageNumber = pageNumber;
             this.PageSize = pageSize;
-            this.TotalCount = totalCount;
+            this.TotalPages = totalPages;
         }
 
 
@@ -23,7 +23,7 @@ namespace Tasks.API.Pagination
         {
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
-            return new PagedResponse<T>(items, pageNumber, pageSize, totalCount);
+            return new PagedResponse<T>(items, pageNumber, pageSize, totalPages);
         }
     }
 }
