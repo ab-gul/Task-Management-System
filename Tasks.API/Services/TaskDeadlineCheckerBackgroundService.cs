@@ -29,11 +29,11 @@ namespace Tasks.API.Services
         {
             await _dbContext.Tasks
                .Where(t => t.DueDate < desiredDate && t.Status == Status.Pending)
-               .ForEachAsync(t => t.Edit(null, null, Status.InProgress));
+               .ForEachAsync(t => t.Edit(null, null, Status.OverDue));
 
             await _dbContext.Tasks
                 .Where(t => t.DueDate < desiredDate && t.Status == Status.InProgress)
-                .ForEachAsync(t => t.Edit(null, null, Status.OverDue));
+                .ForEachAsync(t => t.Edit(null, null, Status.Pending));
 
             await _dbContext.SaveChangesAsync();
         }
